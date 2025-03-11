@@ -1,20 +1,19 @@
-# Jobster API
+# P&G Peakathon Event
 
-#### Starter
+### Starter
 
-The starter is a copy of jobs-api final project, just with additional data.
+이 프로젝트는 'jobs-api final' 프로젝트를 참고하여 React로 만든 웹페이지입니다.
+Express.js 웹 애플리케이션 프레임워크로 구성되어 있으며 데이터베이스로 MongoDB(Atlas)를 사용하였습니다.
 
-#### Setup
+### Setup
 
-- navigate to 06.5-jobster-api/starter
 - install dependencies
 
 ```sh
 npm install
 ```
 
-- create .env and provide correct values
-- you can copy from previous project (just change the DB name)
+- .env 파일 생성 후 자신이 생성한 값을 입력해주세요.
 
 .env
 
@@ -30,110 +29,12 @@ JWT_LIFETIME=
 npm start
 ```
 
-- you should see "Server is listening ...." text
-
-#### Spring Cleaning
-
-##### Remove Swagger
-
-- delete swagger.yaml file
-- remove these lines of code
-- delete swagger.yaml
-  app.js
-
-```js
-const swaggerUI = require('swagger-ui-express');
-const YAML = require('yamljs');
-const swaggerDocument = YAML.load('./swagger.yaml');
-
-app.get('/', (req, res) => {
-  res.send('<h1>Jobs API</h1><a href="/api-docs">Documentation</a>');
-});
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
-```
-
-#### Remove API Limiter
-
-- remove these lines of code
-
 app.js
 
 ```js
-const rateLimiter = require('express-rate-limit');
+const path = require("path");
 
-app.set('trust proxy', 1);
-app.use(
-  rateLimiter({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
-  })
-);
-```
-
-#### Remove CORS
-
-- we don't want external JS apps to access our API (only our front-end)
-- remove these lines of code
-
-```js
-const cors = require('cors');
-app.use(cors());
-```
-
-#### Package.json
-
-- add "dev" script with nodemon
-- change engines to current version (in my case 16)
-
-package.json
-
-```js
-
-"scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js"
-  },
-
-"engines": {
-    "node": "16.x"
-  }
-```
-
-- restart server with "npm run dev"
-
-##### Client Folder
-
-- let's explore client folder
-- open client folder
-- it's a react app built with CRA
-- it's the same as in my React Course (JOBSTER APP),
-  just base url points to our current server (instead of heroku app)
-
-utils/axios.js
-
-```js
-const customFetch = axios.create({
-  baseURL: '/api/v1',
-});
-```
-
-- notice the build folder (production ready application)
-- in CRA we can create build folder by running "npm run build"
-- that's the one we will use for our front-end
-
-##### Setup Front-End
-
-- require "path" module
-- setup express static (as first middleware)
-  to serve static assets from client/build
-- so now instead of public folder we are using client/build
-
-app.js
-
-```js
-const path = require('path');
-
-app.use(express.static(path.resolve(__dirname, './client/build')));
+app.use(express.static(path.resolve(__dirname, "./client/build")));
 
 // place as first middleware
 app.use(express.json());
@@ -146,12 +47,12 @@ app.use(xss());
 - front-end routes pick's it up from there
 
 ```js
-app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/jobs', authenticateUser, jobsRouter);
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/jobs", authenticateUser, jobsRouter);
 
 // serve index.html
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, './client/build', 'index.html'));
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "./client/build", "index.html"));
 });
 
 app.use(notFoundMiddleware);
@@ -239,13 +140,13 @@ res.status(StatusCodes.CREATED).json({
 routes/auth.js
 
 ```js
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const authenticateUser = require('../middleware/authentication');
-const { register, login, updateUser } = require('../controllers/auth');
-router.post('/register', register);
-router.post('/login', login);
-router.patch('/updateUser', authenticateUser, updateUser);
+const authenticateUser = require("../middleware/authentication");
+const { register, login, updateUser } = require("../controllers/auth");
+router.post("/register", register);
+router.post("/login", login);
+router.patch("/updateUser", authenticateUser, updateUser);
 
 module.exports = router;
 ```
@@ -270,7 +171,7 @@ controllers/auth.js
 const updateUser = async (req, res) => {
   const { email, name, lastName, location } = req.body;
   if (!email || !name || !lastName || !location) {
-    throw new BadRequestError('Please provide all values');
+    throw new BadRequestError("Please provide all values");
   }
   const user = await User.findOne({ _id: req.user.userId });
 
@@ -302,8 +203,8 @@ const updateUser = async (req, res) => {
 - this.modifiedPaths();
 
 ```js
-UserSchema.pre('save', async function () {
-  if (!this.isModified('password')) return;
+UserSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
@@ -343,19 +244,19 @@ jobType: {
 populate.js
 
 ```js
-require('dotenv').config();
+require("dotenv").config();
 
-const mockData = require('./mock-data.json');
+const mockData = require("./mock-data.json");
 
-const Job = require('./models/Job');
-const connectDB = require('./db/connect');
+const Job = require("./models/Job");
+const connectDB = require("./db/connect");
 
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
 
     await Job.create(mockData);
-    console.log('Success!!!');
+    console.log("Success!!!");
     process.exit(0);
   } catch (error) {
     console.log(error);
@@ -382,14 +283,14 @@ const getAllJobs = async (req, res) => {
   };
 
   if (search) {
-    queryObject.position = { $regex: search, $options: 'i' };
+    queryObject.position = { $regex: search, $options: "i" };
   }
   // add stuff based on condition
 
-  if (status && status !== 'all') {
+  if (status && status !== "all") {
     queryObject.status = status;
   }
-  if (jobType && jobType !== 'all') {
+  if (jobType && jobType !== "all") {
     queryObject.jobType = jobType;
   }
 
@@ -399,17 +300,17 @@ const getAllJobs = async (req, res) => {
 
   // chain sort conditions
 
-  if (sort === 'latest') {
-    result = result.sort('-createdAt');
+  if (sort === "latest") {
+    result = result.sort("-createdAt");
   }
-  if (sort === 'oldest') {
-    result = result.sort('createdAt');
+  if (sort === "oldest") {
+    result = result.sort("createdAt");
   }
-  if (sort === 'a-z') {
-    result = result.sort('position');
+  if (sort === "a-z") {
+    result = result.sort("position");
   }
-  if (sort === 'z-a') {
-    result = result.sort('-position');
+  if (sort === "z-a") {
+    result = result.sort("-position");
   }
 
   //
@@ -436,7 +337,7 @@ middleware/authentication.js
 
 ```js
 const payload = jwt.verify(token, process.env.JWT_SECRET);
-const testUser = payload.userId === '62eff8bcdb9af70b4155349d';
+const testUser = payload.userId === "62eff8bcdb9af70b4155349d";
 req.user = { userId: payload.userId, testUser };
 ```
 
@@ -445,11 +346,11 @@ req.user = { userId: payload.userId, testUser };
 middleware/testUser
 
 ```js
-const { BadRequestError } = require('../errors');
+const { BadRequestError } = require("../errors");
 
 const testUser = (req, res, next) => {
   if (req.user.testUser) {
-    throw new BadRequestError('Test User. Read Only!');
+    throw new BadRequestError("Test User. Read Only!");
   }
   next();
 };
@@ -460,15 +361,15 @@ module.exports = testUser;
 - add to auth routes (updateUser)
 
 ```js
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const authenticateUser = require('../middleware/authentication');
-const testUser = require('../middleware/testUser');
-const { register, login, updateUser } = require('../controllers/auth');
+const authenticateUser = require("../middleware/authentication");
+const testUser = require("../middleware/testUser");
+const { register, login, updateUser } = require("../controllers/auth");
 
-router.post('/register', register);
-router.post('/login', login);
-router.patch('/updateUser', authenticateUser, testUser, updateUser);
+router.post("/register", register);
+router.post("/login", login);
+router.patch("/updateUser", authenticateUser, testUser, updateUser);
 
 module.exports = router;
 ```
@@ -478,26 +379,15 @@ module.exports = router;
 routes/jobs.js
 
 ```js
-const express = require('express');
+const express = require("express");
 
 const router = express.Router();
-const {
-  createJob,
-  deleteJob,
-  getAllJobs,
-  updateJob,
-  getJob,
-  showStats,
-} = require('../controllers/jobs');
-const testUser = require('../middleware/testUser');
+const { createJob, deleteJob, getAllJobs, updateJob, getJob, showStats } = require("../controllers/jobs");
+const testUser = require("../middleware/testUser");
 
-router.route('/').post(testUser, createJob).get(getAllJobs);
-router.route('/stats').get(showStats);
-router
-  .route('/:id')
-  .get(getJob)
-  .delete(testUser, deleteJob)
-  .patch(testUser, updateJob);
+router.route("/").post(testUser, createJob).get(getAllJobs);
+router.route("/stats").get(showStats);
+router.route("/:id").get(getJob).delete(testUser, deleteJob).patch(testUser, updateJob);
 
 module.exports = router;
 ```
@@ -507,24 +397,24 @@ module.exports = router;
 routes/auth.js
 
 ```js
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const authenticateUser = require('../middleware/authentication');
-const testUser = require('../middleware/testUser');
-const { register, login, updateUser } = require('../controllers/auth');
+const authenticateUser = require("../middleware/authentication");
+const testUser = require("../middleware/testUser");
+const { register, login, updateUser } = require("../controllers/auth");
 
-const rateLimiter = require('express-rate-limit');
+const rateLimiter = require("express-rate-limit");
 const apiLimiter = rateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 10,
   message: {
-    msg: 'Too many requests from this IP, please try again after 15 minutes',
+    msg: "Too many requests from this IP, please try again after 15 minutes",
   },
 });
 
-router.post('/register', apiLimiter, register);
-router.post('/login', apiLimiter, login);
-router.patch('/updateUser', authenticateUser, testUser, updateUser);
+router.post("/register", apiLimiter, register);
+router.post("/login", apiLimiter, login);
+router.patch("/updateUser", authenticateUser, testUser, updateUser);
 
 module.exports = router;
 ```
@@ -532,9 +422,9 @@ module.exports = router;
 app.js
 
 ```js
-app.set('trust proxy', 1);
+app.set("trust proxy", 1);
 
-app.use(express.static(path.resolve(__dirname, './client/build')));
+app.use(express.static(path.resolve(__dirname, "./client/build")));
 ```
 
 #### Setup Stats Route
@@ -543,9 +433,7 @@ controllers/jobs
 
 ```js
 const showStats = (req, res) => {
-  res
-    .status(StatusCodes.OK)
-    .json({ defaultStats: {}, monthlyApplications: [] });
+  res.status(StatusCodes.OK).json({ defaultStats: {}, monthlyApplications: [] });
 };
 
 module.exports = {
@@ -561,21 +449,14 @@ module.exports = {
 routes/jobs.js
 
 ```js
-const express = require('express');
+const express = require("express");
 
 const router = express.Router();
-const {
-  createJob,
-  deleteJob,
-  getAllJobs,
-  updateJob,
-  getJob,
-  showStats,
-} = require('../controllers/jobs');
+const { createJob, deleteJob, getAllJobs, updateJob, getJob, showStats } = require("../controllers/jobs");
 
-router.route('/').post(createJob).get(getAllJobs);
-router.route('/stats').get(showStats);
-router.route('/:id').get(getJob).delete(deleteJob).patch(updateJob);
+router.route("/").post(createJob).get(getAllJobs);
+router.route("/stats").get(showStats);
+router.route("/:id").get(getJob).delete(deleteJob).patch(updateJob);
 
 module.exports = router;
 ```
@@ -586,8 +467,8 @@ module.exports = router;
 controllers/jobs
 
 ```js
-const mongoose = require('mongoose');
-const moment = require('moment');
+const mongoose = require("mongoose");
+const moment = require("moment");
 ```
 
 - [Javascript Nuggets - Reduce Basics](https://youtu.be/3WkW9nrS2mw)
@@ -597,10 +478,7 @@ controllers/jobs
 
 ```js
 const showStats = async (req, res) => {
-  let stats = await Job.aggregate([
-    { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
-    { $group: { _id: '$status', count: { $sum: 1 } } },
-  ]);
+  let stats = await Job.aggregate([{ $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } }, { $group: { _id: "$status", count: { $sum: 1 } } }]);
 
   stats = stats.reduce((acc, curr) => {
     const { _id: title, count } = curr;
@@ -618,11 +496,11 @@ const showStats = async (req, res) => {
     { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
     {
       $group: {
-        _id: { year: { $year: '$createdAt' }, month: { $month: '$createdAt' } },
+        _id: { year: { $year: "$createdAt" }, month: { $month: "$createdAt" } },
         count: { $sum: 1 },
       },
     },
-    { $sort: { '_id.year': -1, '_id.month': -1 } },
+    { $sort: { "_id.year": -1, "_id.month": -1 } },
     { $limit: 6 },
   ]);
   monthlyApplications = monthlyApplications
@@ -634,7 +512,7 @@ const showStats = async (req, res) => {
       const date = moment()
         .month(month - 1)
         .year(year)
-        .format('MMM Y');
+        .format("MMM Y");
       return { date, count };
     })
     .reverse();
@@ -661,7 +539,7 @@ monthlyApplications = monthlyApplications
     const date = moment()
       .month(month - 1)
       .year(year)
-      .format('MMM Y');
+      .format("MMM Y");
     return { date, count };
   })
   .reverse();
