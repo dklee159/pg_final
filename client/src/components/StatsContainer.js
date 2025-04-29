@@ -16,8 +16,18 @@ const StatsContainer = () => {
 
   const defaultStats = [
     {
-      title: "A",
-      count: stats.A || 0,
+      title: "TestTeamA",
+      count: stats.TestTeamA || 0,
+      color: "#1d4ed8",
+    },
+    {
+      title: "TestTeamB",
+      count: stats.TestTeamB || 0,
+      color: "#1d4ed8",
+    },
+    {
+      title: "TestTeamC",
+      count: stats.TestTeamC || 0,
       color: "#1d4ed8",
     }
   ];
@@ -37,13 +47,22 @@ const StatsContainer = () => {
       return b.score - a.score;
     });
 
-  if (isLoading || whole.length === 0) {
+  if (isLoading) {
     return (
       <LoadingWrapper className="full-page">
         <Loading />
       </LoadingWrapper>
     );
   }
+
+  if (whole.length === 0) {
+    return (
+      <Wrapper>
+        <h4>No Teams results to display...</h4>
+      </Wrapper>
+    );
+  }
+  
   return (
     <Wrapper>
       {scoredStats.map((item, index) => {
