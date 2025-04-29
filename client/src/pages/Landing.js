@@ -30,9 +30,9 @@ const Landing = () => {
     setValues({ ...values, [name]: value });
   };
 
-  // const toggleMember = () => {
-  //   setValues({ ...values, isMember: !values.isMember });
-  // };
+  const toggleMember = () => {
+    setValues({ ...values, isMember: !values.isMember });
+  };
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -62,19 +62,19 @@ const Landing = () => {
         <hr />
         <h5>Login</h5>
         {/* team field */}
-        {/* <FormRow type="team" name="team" value={values.team} handleChange={handleChange} /> */}
-        <FormRowSelect name="team" value={values.team} handleChange={handleChange} list={["", ...values.teamOptions]} />
+        <FormRow type="team" name="team" value={values.team} handleChange={handleChange} />
+        {/* <FormRowSelect name="team" value={values.team} handleChange={handleChange} list={["", ...values.teamOptions]} /> */}
         {/* password field */}
         <FormRow type="password" name="password" value={values.password} handleChange={handleChange} labelText="Password (Team Code)" />
         <button type="submit" className="btn btn-block" disabled={isLoading}>
           {isLoading ? "loading..." : "submit"}
         </button>
-        {/* <p>
+        <p>
           {values.isMember ? "Not a member yet?" : "Already a member?"}
           <button type="button" onClick={toggleMember} className="member-btn">
             {values.isMember ? "Register" : "Login"}
           </button>
-        </p> */}
+        </p>
       </form>
     </Wrapper>
   );

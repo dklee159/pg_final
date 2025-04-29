@@ -16,6 +16,7 @@ const register = async (req, res) => {
 };
 
 const registerPlayer = async (req, res) => {
+  console.log(req.body);
   const player = await Player.create({ ...req.body });
   const token = player.createJWT();
   res.status(StatusCodes.CREATED).json({

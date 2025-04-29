@@ -50,7 +50,6 @@ const getAllTeams = async (req, res) => {
 };
 
 const getTeam = async (req, res) => {
-  console.log("get");
   const {
     params: { id: teamId },
   } = req;
@@ -65,6 +64,7 @@ const getTeam = async (req, res) => {
 };
 
 const createTeam = async (req, res) => {
+  console.log(req.body);
   const team = await Team.create(req.body);
   res.status(StatusCodes.CREATED).json({ team });
 };
