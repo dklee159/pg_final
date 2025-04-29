@@ -12,7 +12,9 @@ const initialState = {
   quizNum: "",
   isMember: true,
   teamOptions: [
-    "A"
+    "TestTeamA",
+    "TestTeamB",
+    "TestTeamC"
   ],
 };
 
