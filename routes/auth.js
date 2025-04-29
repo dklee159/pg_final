@@ -12,8 +12,8 @@ const apiLimiter = rateLimiter({
   },
 });
 
-const { register, login, updateUser, loginPlayer, registerPlayer } = require('../controllers/auth');
+const { register, login, loginPlayer, registerPlayer, updateAdmin } = require('../controllers/auth');
 router.post('/register', apiLimiter, register).post('/registerPlayer', apiLimiter, registerPlayer);
 router.post('/login', apiLimiter, login).post('/loginPlayer', apiLimiter, loginPlayer);
-router.patch('/updateUser', authenticateUser, updateUser);
+router.patch('/updateAdmin', authenticateUser, updateAdmin);
 module.exports = router;

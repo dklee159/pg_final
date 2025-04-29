@@ -1,22 +1,21 @@
-const User = require('../models/User');
+const Admin = require('../models/Admin');
 const Player = require('../models/Player');
 const { StatusCodes } = require('http-status-codes');
 const { BadRequestError, UnauthenticatedError } = require('../errors');
 
 const register = async (req, res) => {
-  const user = await User.create({ ...req.body });
+  const admin = await Admin.create({ ...req.body });
   const token = user.createJWT();
   res.status(StatusCodes.CREATED).json({
     user: {
-      email: user.email,
-      name: user.name,
+      email: admin.email,
+      name: admin.name,
       token,
     },
   });
 };
 
 const registerPlayer = async (req, res) => {
-  console.log(req.body);
   const player = await Player.create({ ...req.body });
   const token = player.createJWT();
   res.status(StatusCodes.CREATED).json({
@@ -33,20 +32,20 @@ const login = async (req, res) => {
   if (!email || !password) {
     throw new BadRequestError('Please provide email and password');
   }
-  const user = await User.findOne({ email });
-  if (!user) {
+  const admin = await Admin.findOne({ email });
+  if (!admin) {
     throw new UnauthenticatedError('Invalid Credentials');
   }
-  const isPasswordCorrect = await user.comparePassword(password);
+  const isPasswordCorrect = await admin.comparePassword(password);
   if (!isPasswordCorrect) {
     throw new UnauthenticatedError('Invalid Credentials');
   }
   // compare password
-  const token = user.createJWT();
+  const token = admin.createJWT();
   res.status(StatusCodes.OK).json({
-    user: {
-      email: user.email,
-      name: user.name,
+    admin: {
+      email: admin.email,
+      name: admin.name,
       token,
     },
   });
@@ -76,22 +75,22 @@ const loginPlayer = async (req, res) => {
   });
 };
 
-const updateUser = async (req, res) => {
+const updateAdmin = async (req, res) => {
   const { email, name, lastName, location } = req.body;
   if (!email || !name || !lastName || !location) {
     throw new BadRequest('Please provide all values');
   }
-  const user = await User.findOne({ _id: req.user.userId });
+  const admin = await Admin.findOne({ _id: req.admin.userId });
 
-  user.email = email;
-  user.name = name;
+  admin.email = email;
+  admin.name = name;
 
-  await user.save();
-  const token = user.createJWT();
+  await admin.save();
+  const token = admin.createJWT();
   res.status(StatusCodes.OK).json({
-    user: {
-      email: user.email,
-      name: user.name,
+    admin: {
+      email: admin.email,
+      name: admin.name,
       token,
     },
   });
@@ -100,7 +99,7 @@ const updateUser = async (req, res) => {
 module.exports = {
   register,
   login,
-  updateUser,
+  updateAdmin,
   registerPlayer,
   loginPlayer,
 };

@@ -1,8 +1,6 @@
 const Team = require("../models/Team");
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, NotFoundError } = require("../errors");
-const mongoose = require("mongoose");
-const moment = require("moment");
 
 const getAllTeams = async (req, res) => {
   const { search, status, quizNum, sort } = req.query;
@@ -64,7 +62,6 @@ const getTeam = async (req, res) => {
 };
 
 const createTeam = async (req, res) => {
-  console.log(req.body);
   const team = await Team.create(req.body);
   res.status(StatusCodes.CREATED).json({ team });
 };

@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { log } = require("console");
 
 const AdminSchema = new mongoose.Schema({
   name: {
