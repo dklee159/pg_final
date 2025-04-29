@@ -56,7 +56,7 @@ const playerSlice = createSlice({
         state.isLoading = false;
         state.player = player;
         addPlayerToLocalStorage(player);
-        toast.success(`Hello There ${player.name}`);
+        toast.success(`Hello There ${player.team}`);
       })
       .addCase(registerPlayer.rejected, (state, { payload }) => {
         state.isLoading = false;
