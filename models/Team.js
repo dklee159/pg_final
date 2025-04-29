@@ -5,9 +5,9 @@ const TeamSchema = new mongoose.Schema(
     team: {
       type: String,
       enum: [
-        "A"
+        "TestTeamA", "TestTeamB", "TestTeamC"
       ],
-      default: "A",
+      default: "TestTeamA",
     },
     status: {
       type: String,
