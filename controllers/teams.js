@@ -94,7 +94,9 @@ const showStats = async (req, res) => {
   }, {});
 
   const defaultStats = {
-    A: stats.A || 0,    
+    TestTeamA: stats.TestTeamA || 0,    
+    TestTeamB: stats.TestTeamB || 0,    
+    TestTeamC: stats.TestTeamC || 0,    
   };
 
   res.status(StatusCodes.OK).json({ defaultStats });

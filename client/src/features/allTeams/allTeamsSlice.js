@@ -48,7 +48,7 @@ const allTeamsSlice = createSlice({
     changePage: (state, { payload }) => {
       state.page = payload;
     },
-    clearAllTeamsState: (state) => initialState,
+    clearAllTeamsState: (_state) => initialState,
   },
   extraReducers: {
     [getAllTeams.pending]: (state) => {

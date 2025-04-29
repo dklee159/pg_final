@@ -2,18 +2,18 @@ import customFetch from "../../utils/axios";
 import { clearValues } from "../team/teamSlice";
 import { logoutPlayer } from "./playerSlice";
 
-export const registerPlayerThunk = async (url, user, thunkAPI) => {
+export const registerPlayerThunk = async (url, player, thunkAPI) => {
   try {
-    const resp = await customFetch.post(url, user);
+    const resp = await customFetch.post(url, player);
     return resp.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data.msg);
   }
 };
 
-export const loginPlayerThunk = async (url, user, thunkAPI) => {
+export const loginPlayerThunk = async (url, player, thunkAPI) => {
   try {
-    const resp = await customFetch.post(url, user);
+    const resp = await customFetch.post(url, player);
     return resp.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data.msg);

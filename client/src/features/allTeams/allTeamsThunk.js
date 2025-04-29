@@ -1,10 +1,7 @@
 import customFetch, { checkForUnauthorizedResponse } from "../../utils/axios";
 
-export const getAllTeamsThunk = async (_, thunkAPI) => {
-  console.log("All In");
-  const { page, search, searchStatus, searchNum, sort } =
-    thunkAPI.getState().allTeams;
-  console.log({ page, search, searchStatus, searchNum, sort });
+export const getAllTeamsThunk = async (_, thunkAPI) => {  
+  const { page, search, searchStatus, searchNum, sort } = thunkAPI.getState().allTeams;  
   let url = `/teams?status=${searchStatus}&quizNum=${searchNum}&sort=${sort}&page=${page}`;
   if (search) {
     url = url + `&search=${search}`;
