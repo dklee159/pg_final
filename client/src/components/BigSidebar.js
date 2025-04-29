@@ -4,7 +4,7 @@ import Wrapper from '../assets/wrappers/BigSidebar';
 import { useSelector } from 'react-redux';
 
 const BigSidebar = () => {
-  const { isSidebarOpen } = useSelector((store) => store.user);
+  const { isSidebarOpen } = useSelector((store) => store.admin);
 
   return (
     <Wrapper>
