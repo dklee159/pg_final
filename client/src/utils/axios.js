@@ -1,15 +1,15 @@
 import axios from "axios";
-import { clearStore } from "../features/user/userSlice";
-import { getUserFromLocalStorage } from "./localStorage";
+import { clearStore } from "../features/admin/adminSlice";
+import { getAdminFromLocalStorage } from "./localStorage";
 
 const customFetch = axios.create({
   baseURL: "/api/v1",
 });
 
 customFetch.interceptors.request.use((config) => {
-  const user = getUserFromLocalStorage();
-  if (user) {
-    config.headers["Authorization"] = `Bearer ${user.token}`;
+  const admin = getAdminFromLocalStorage();
+  if (admin) {
+    config.headers["Authorization"] = `Bearer ${admin.token}`;
   }
   return config;
 });

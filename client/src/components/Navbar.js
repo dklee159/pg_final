@@ -2,7 +2,7 @@ import Wrapper from "../assets/wrappers/Navbar";
 import { FaAlignLeft } from "react-icons/fa";
 import Logo from "./Logo";
 import { useDispatch } from "react-redux";
-import { toggleSidebar, clearStore } from "../features/user/userSlice";
+import { toggleSidebar, clearStore } from "../features/admin/adminSlice";
 
 const Navbar = () => {
   const dispatch = useDispatch();

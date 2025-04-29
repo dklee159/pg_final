@@ -3,7 +3,8 @@ import { Logo, FormRow } from "../components";
 import Wrapper from "../assets/wrappers/AdminPage";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser, registerUser } from "../features/user/userSlice";
+import { loginAdmin, registerAdmin } from "../features/admin/adminSlice";
+
 import { useNavigate } from "react-router-dom";
 
 const initialState = {
@@ -15,7 +16,7 @@ const initialState = {
 
 function Administer() {
   const [values, setValues] = useState(initialState);
-  const { user, isLoading } = useSelector((store) => store.user);
+  const { admin, isLoading } = useSelector((store) => store.admin);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -33,19 +34,19 @@ function Administer() {
       return;
     }
     if (isMember) {
-      dispatch(loginUser({ email: email, password: password }));
+      dispatch(loginAdmin({ email: email, password: password }));
       return;
     }
-    dispatch(registerUser({ name, email, password }));
+    dispatch(registerAdmin({ name, email, password }));
   };
 
   useEffect(() => {
-    if (user) {
+    if (admin) {
       setTimeout(() => {
         navigate("/");
       }, 1000);
     }
-  }, [user]);
+  }, [admin]);
   return (
     <Wrapper className="full-page">
       <form className="form" onSubmit={onSubmit}>
