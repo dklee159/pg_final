@@ -3,7 +3,7 @@ import { clearStore } from "../features/admin/adminSlice";
 import { getAdminFromLocalStorage } from "./localStorage";
 
 const customFetch = axios.create({
-  baseURL: "/api/v1",
+  baseURL: "https://pg-webpage-backend.onrender.com",
 });
 
 customFetch.interceptors.request.use((config) => {

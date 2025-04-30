@@ -28,8 +28,8 @@ app.use(cors());
 app.use(xss());
 
 // routes
-app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/teams", teamsRouter);
+app.use("https://pg-webpage-backend.onrender.com/auth", authRouter);
+app.use("https://pg-webpage-backend.onrender.com/teams", teamsRouter);
 
 app.get("*", (_req, res) => {
   res.sendFile(path.resolve(__dirname, "./client/build", "index.html"));
