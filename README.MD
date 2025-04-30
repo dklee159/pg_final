@@ -5,8 +5,8 @@
 이 프로젝트는 MERN 스택(MongoDB, Express.js, React, Node.js) 기반으로 제작된 팀 퀴즈 대회 응시 페이지 및 결과 조회를 위한 관리자 페이지 입니다.
 관리자는 퀴즈를 운영하고, 참여자는 팀 단위로 로그인하여 퀴즈를 응시할 수 있습니다.
 
-관리자 페이지: https://pg-webpage-frontend.onrender.com/admin
-퀴즈 페이지: https://pg-webpage-frontend.onrender.com/landing/1
+🔒 관리자 페이지: https://pg-webpage-frontend.onrender.com/admin
+📑 퀴즈 페이지: https://pg-webpage-frontend.onrender.com/landing/1
 (url에서 /landing/n, n을 교체함으로써 해당 퀴즈로 이동, 1~17번)
 
 ---
