@@ -1,559 +1,119 @@
-# P&G Peakathon Event
+# P&G Peakathon 2023 Metaverse Quest
 
-### Starter
+## 🧠 Starter
 
-이 프로젝트는 'jobs-api final' 프로젝트를 참고하여 React로 만든 웹페이지입니다.
-Express.js 웹 애플리케이션 프레임워크로 구성되어 있으며 데이터베이스로 MongoDB(Atlas)를 사용하였습니다.
+이 프로젝트는 MERN 스택(MongoDB, Express.js, React, Node.js) 기반으로 제작된 팀 퀴즈 대회 응시 페이지 및 결과 조회를 위한 관리자 페이지 입니다.
+관리자는 퀴즈를 운영하고, 참여자는 팀 단위로 로그인하여 퀴즈를 응시할 수 있습니다.
 
-### Setup
+---
 
-- install dependencies
+## 📌 주요 기능
 
-```sh
-npm install
+### 👨‍💼 관리자(Admin)
+
+- 관리자 회원가입 / 로그인 (JWT 인증)
+- 팀 응답 결과 확인 및 통계 열람
+- 사이드바 토글 및 대시보드 레이아웃 제공
+
+### 👥 참여자(Player)
+
+- 팀 이름 + 비밀번호 로그인
+- 객관식/주관식 퀴즈 응답
+- 정답 자동 채점 기능 포함 (클라이언트에서 처리)
+- 중복 응답 방지 및 제출 확인
+
+### 📊 통계/관리
+
+- 퀴즈별 팀 응답 현황 집계
+- 팀 리스트 필터링, 검색, 페이지네이션
+
+---
+
+## ⚙️ 기술 스택
+
+| 구성 영역      | 기술                                          |
+| -------------- | --------------------------------------------- |
+| **프론트엔드** | React, Redux Toolkit, Axios, React Router DOM |
+| **백엔드**     | Express.js, Node.js, MongoDB (Mongoose)       |
+| **인증**       | JWT + bcrypt                                  |
+| **보안**       | CORS, xss-clean                               |
+| **상태관리**   | Redux Slice (admin, player, team, modal 등)   |
+| **에러 처리**  | 커스텀 에러 클래스 + Express 미들웨어 기반    |
+
+---
+
+## 🗂️ 프로젝트 구조
+
 ```
-
-- .env 파일 생성 후 자신이 생성한 값을 입력해주세요.
-
-.env
-
-```js
-MONGO_URI=
-JWT_SECRET=
-JWT_LIFETIME=
-```
-
-- start the project
-
-```sh
-npm start
-```
-
-app.js
-
-```js
-const path = require("path");
-
-app.use(express.static(path.resolve(__dirname, "./client/build")));
-
-// place as first middleware
-app.use(express.json());
-app.use(helmet());
-app.use(cors());
-app.use(xss());
-```
-
-- serve index.html for all routes (apart from API)
-- front-end routes pick's it up from there
-
-```js
-app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/jobs", authenticateUser, jobsRouter);
-
-// serve index.html
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "./client/build", "index.html"));
-});
-
-app.use(notFoundMiddleware);
-app.use(errorHandlerMiddleware);
-```
-
-- navigate to localhost:5000
-- clear local storage (if necessary)
-
-#### Modify User Model
-
-- add following properties
-
-models/User.js
-
-```js
-lastName: {
-    type: String,
-    trim: true,
-    maxlength: 20,
-    default: 'lastName',
-  },
-  location: {
-    type: String,
-    trim: true,
-    maxlength: 20,
-    default: 'my city',
-  },
+pg_final-main/
+├── client/                      # 프론트엔드 (React)
+│   ├── src/
+│   │   ├── pages/               # 화면 구성 (Landing, Quiz, Dashboard 등)
+│   │   ├── features/            # Redux slices (admin, player 등)
+│   │   ├── components/          # 재사용 UI 컴포넌트
+│   │   ├── assets/              # 이미지, 정답 데이터, 스타일
+│   │   ├── utils/               # axios, localStorage 등 유틸
+│   │   └── App.js / index.js    # 진입점 및 라우팅
+│   └── public/
+├── controllers/                 # API 핸들러 (auth, teams)
+├── routes/                      # 라우팅 설정
+├── models/                      # Mongoose 모델 (Admin, Team, Player)
+├── middleware/                  # 인증 / 에러 처리 미들웨어
+├── errors/                      # 커스텀 에러 클래스
+├── db/connect.js                # MongoDB 연결 함수
+└── app.js                       # Express 앱 진입점
 
 ```
 
-#### Modify Response in Register and Login
-
-- change the response structure in
-  register and login controllers (just keep old StatusCodes)
-
-controllers/auth.js
-
-```js
-res.status(StatusCodes.CREATED).json({
-  user: {
-    email: user.email,
-    lastName: user.lastName,
-    location: user.location,
-    name: user.name,
-    token,
-  },
-});
-```
-
-- Login and Register Works Now :):):)
-
-#### Create Test User
-
-- test front-end request
-- in postman or front-end
-- make sure email and password are the same (or change the front-end)
-
-```js
-{
-    "name":"demo user",
-    "email":"testUser@test.com",
-    "password":"secret"
-}
-```
-
-- navigate to client/src/pages/Register.js
-- make sure email and password match your test user
-
-```js
-<button
-  type='button'
-  className='btn btn-block btn-hipster'
-  disabled={isLoading}
-  onClick={() =>
-  dispatch(loginUser({ email: 'testUser@test.com', password: 'secret' }))}>
-
-```
-
-#### Update User Functionality
-
-- import authenticateUser middleware
-- setup updateUser route (protected route)
-
-routes/auth.js
-
-```js
-const express = require("express");
-const router = express.Router();
-const authenticateUser = require("../middleware/authentication");
-const { register, login, updateUser } = require("../controllers/auth");
-router.post("/register", register);
-router.post("/login", login);
-router.patch("/updateUser", authenticateUser, updateUser);
+---
 
-module.exports = router;
-```
+## 🔐 인증 및 사용자 관리
 
-- create updateUser controller
-- setup export
+- 관리자와 플레이어를 구분하여 각각 별도의 로그인/회원가입 API 제공
+- JWT 기반 인증 토큰 발급 및 검증
+- 플레이어는 팀 이름 기반 인증, 관리자만 대시보드 접근 가능
 
-controllers/auth.js
+---
 
-```js
-const updateUser = async (req, res) => {
-  console.log(req.user);
-  console.log(req.body);
-};
-```
-
-- complete updateUser
+## ✅ 정답 채점 로직
 
-controllers/auth.js
-
-```js
-const updateUser = async (req, res) => {
-  const { email, name, lastName, location } = req.body;
-  if (!email || !name || !lastName || !location) {
-    throw new BadRequestError("Please provide all values");
-  }
-  const user = await User.findOne({ _id: req.user.userId });
+- 객관식: 선택값과 정답(`Answers.js`)을 비교하여 정답 여부 판단
+- 주관식: 배열 형태로 모든 항목 정답과 비교
+- 채점 결과에 따라 `"correct"` / `"wrong"` 상태 저장
+- 팀은 퀴즈당 1회만 제출 가능 (중복 제출 차단)
 
-  user.email = email;
-  user.name = name;
-  user.lastName = lastName;
-  user.location = location;
+---
 
-  await user.save();
+## 📋 주요 파일 설명
 
-  const token = user.createJWT();
+### 📌 `client/src/features/admin/adminSlice.js`
 
-  res.status(StatusCodes.OK).json({
-    user: {
-      email: user.email,
-      lastName: user.lastName,
-      location: user.location,
-      name: user.name,
-      token,
-    },
-  });
-};
-```
+- 관리자 로그인/등록/로그아웃 관리
+- `createAsyncThunk`로 API 연동
+- `localStorage`를 통한 상태 유지
 
-- Why New Token?
+### 📌 `client/src/pages/quiz/Quiz.js`
 
-#### GOTCHA
+- 퀴즈 풀이 및 제출 페이지
+- `quizNum`을 기준으로 객관식/주관식 분기 처리
+- 제출 전 확인 모달 표시 (`modalSlice` 활용)
 
-- this.modifiedPaths();
+### 📌 `controllers/auth.js`
 
-```js
-UserSchema.pre("save", async function () {
-  if (!this.isModified("password")) return;
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-});
-```
-
-#### Modify Job Model
-
-- add following properties
-
-models/Job.js
+- 관리자와 플레이어 각각의 로그인/회원가입 처리
+- 비밀번호 암호화 및 비교, JWT 생성 포함
 
-```js
-jobType: {
-      type: String,
-      enum: ['full-time', 'part-time', 'remote', 'internship'],
-      default: 'full-time',
-    },
-    jobLocation: {
-      type: String,
-      default: 'my city',
-      required: true,
-    },
-```
+### 📌 `controllers/teams.js`
 
-- default property just for fun, values will be provided by front-end
+- 팀 응답 등록, 수정, 단일 조회, 전체 조회 API 제공
+- `getAllTeams`에 검색/필터/정렬/페이지네이션 포함
 
-#### Setup Mock Data
+---
 
-- [Mockaroo](https://www.mockaroo.com/)
-- create mock-data.json (root)
-- provide test user id
+## 🔍 개선 여지 및 추후 기능 (미정)
 
-#### Populate DB
-
-- create populate.js
-
-populate.js
-
-```js
-require("dotenv").config();
-
-const mockData = require("./mock-data.json");
-
-const Job = require("./models/Job");
-const connectDB = require("./db/connect");
-
-const start = async () => {
-  try {
-    await connectDB(process.env.MONGO_URI);
-
-    await Job.create(mockData);
-    console.log("Success!!!");
-    process.exit(0);
-  } catch (error) {
-    console.log(error);
-    process.exit(1);
-  }
-};
-
-start();
-```
-
-#### Modify Get All Jobs
-
-- latest mongoose version change
-
-controllers/jobs.js
-
-```js
-const getAllJobs = async (req, res) => {
-  const { search, status, jobType, sort } = req.query;
-
-  // protected route
-  const queryObject = {
-    createdBy: req.user.userId,
-  };
-
-  if (search) {
-    queryObject.position = { $regex: search, $options: "i" };
-  }
-  // add stuff based on condition
-
-  if (status && status !== "all") {
-    queryObject.status = status;
-  }
-  if (jobType && jobType !== "all") {
-    queryObject.jobType = jobType;
-  }
-
-  // NO AWAIT
-
-  let result = Job.find(queryObject);
-
-  // chain sort conditions
-
-  if (sort === "latest") {
-    result = result.sort("-createdAt");
-  }
-  if (sort === "oldest") {
-    result = result.sort("createdAt");
-  }
-  if (sort === "a-z") {
-    result = result.sort("position");
-  }
-  if (sort === "z-a") {
-    result = result.sort("-position");
-  }
-
-  //
-
-  // setup pagination
-  const page = Number(req.query.page) || 1;
-  const limit = Number(req.query.limit) || 10;
-  const skip = (page - 1) * limit;
-
-  result = result.skip(skip).limit(limit);
-
-  const jobs = await result;
-
-  const totalJobs = await Job.countDocuments(queryObject);
-  const numOfPages = Math.ceil(totalJobs / limit);
-
-  res.status(StatusCodes.OK).json({ jobs, totalJobs, numOfPages });
-};
-```
-
-#### Make Test User Read-Only
-
-middleware/authentication.js
-
-```js
-const payload = jwt.verify(token, process.env.JWT_SECRET);
-const testUser = payload.userId === "62eff8bcdb9af70b4155349d";
-req.user = { userId: payload.userId, testUser };
-```
-
-- create testingUser in middleware
-
-middleware/testUser
-
-```js
-const { BadRequestError } = require("../errors");
-
-const testUser = (req, res, next) => {
-  if (req.user.testUser) {
-    throw new BadRequestError("Test User. Read Only!");
-  }
-  next();
-};
-
-module.exports = testUser;
-```
-
-- add to auth routes (updateUser)
-
-```js
-const express = require("express");
-const router = express.Router();
-const authenticateUser = require("../middleware/authentication");
-const testUser = require("../middleware/testUser");
-const { register, login, updateUser } = require("../controllers/auth");
-
-router.post("/register", register);
-router.post("/login", login);
-router.patch("/updateUser", authenticateUser, testUser, updateUser);
-
-module.exports = router;
-```
-
-- add to job routes (createJob, updateJob, deleteJob)
-
-routes/jobs.js
-
-```js
-const express = require("express");
-
-const router = express.Router();
-const { createJob, deleteJob, getAllJobs, updateJob, getJob, showStats } = require("../controllers/jobs");
-const testUser = require("../middleware/testUser");
-
-router.route("/").post(testUser, createJob).get(getAllJobs);
-router.route("/stats").get(showStats);
-router.route("/:id").get(getJob).delete(testUser, deleteJob).patch(testUser, updateJob);
-
-module.exports = router;
-```
-
-#### API Limiter
-
-routes/auth.js
-
-```js
-const express = require("express");
-const router = express.Router();
-const authenticateUser = require("../middleware/authentication");
-const testUser = require("../middleware/testUser");
-const { register, login, updateUser } = require("../controllers/auth");
-
-const rateLimiter = require("express-rate-limit");
-const apiLimiter = rateLimiter({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10,
-  message: {
-    msg: "Too many requests from this IP, please try again after 15 minutes",
-  },
-});
-
-router.post("/register", apiLimiter, register);
-router.post("/login", apiLimiter, login);
-router.patch("/updateUser", authenticateUser, testUser, updateUser);
-
-module.exports = router;
-```
-
-app.js
-
-```js
-app.set("trust proxy", 1);
-
-app.use(express.static(path.resolve(__dirname, "./client/build")));
-```
-
-#### Setup Stats Route
-
-controllers/jobs
-
-```js
-const showStats = (req, res) => {
-  res.status(StatusCodes.OK).json({ defaultStats: {}, monthlyApplications: [] });
-};
-
-module.exports = {
-  createJob,
-  deleteJob,
-  getAllJobs,
-  updateJob,
-  getJob,
-  showStats,
-};
-```
-
-routes/jobs.js
-
-```js
-const express = require("express");
-
-const router = express.Router();
-const { createJob, deleteJob, getAllJobs, updateJob, getJob, showStats } = require("../controllers/jobs");
-
-router.route("/").post(createJob).get(getAllJobs);
-router.route("/stats").get(showStats);
-router.route("/:id").get(getJob).delete(deleteJob).patch(updateJob);
-
-module.exports = router;
-```
-
-- npm install moment
-- import mongoose and moment
-
-controllers/jobs
-
-```js
-const mongoose = require("mongoose");
-const moment = require("moment");
-```
-
-- [Javascript Nuggets - Reduce Basics](https://youtu.be/3WkW9nrS2mw)
-- [Javascript Nuggets - Reduce (object example)](https://youtu.be/5BFkp8JjLEY)
-
-controllers/jobs
-
-```js
-const showStats = async (req, res) => {
-  let stats = await Job.aggregate([{ $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } }, { $group: { _id: "$status", count: { $sum: 1 } } }]);
-
-  stats = stats.reduce((acc, curr) => {
-    const { _id: title, count } = curr;
-    acc[title] = count;
-    return acc;
-  }, {});
-
-  const defaultStats = {
-    pending: stats.pending || 0,
-    interview: stats.interview || 0,
-    declined: stats.declined || 0,
-  };
-
-  let monthlyApplications = await Job.aggregate([
-    { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
-    {
-      $group: {
-        _id: { year: { $year: "$createdAt" }, month: { $month: "$createdAt" } },
-        count: { $sum: 1 },
-      },
-    },
-    { $sort: { "_id.year": -1, "_id.month": -1 } },
-    { $limit: 6 },
-  ]);
-  monthlyApplications = monthlyApplications
-    .map((item) => {
-      const {
-        _id: { year, month },
-        count,
-      } = item;
-      const date = moment()
-        .month(month - 1)
-        .year(year)
-        .format("MMM Y");
-      return { date, count };
-    })
-    .reverse();
-
-  res.status(StatusCodes.OK).json({ defaultStats, monthlyApplications });
-};
-```
-
-#### Deploy
-
-- remove existing git repo
-
-- add reverse() in showStats
-
-controllers/jobs.js
-
-```js
-monthlyApplications = monthlyApplications
-  .map((item) => {
-    const {
-      _id: { year, month },
-      count,
-    } = item;
-    const date = moment()
-      .month(month - 1)
-      .year(year)
-      .format("MMM Y");
-    return { date, count };
-  })
-  .reverse();
-```
-
-- remove Procfile
-- remove engines from package.json
-
-```json
-"engines": {
-    "node": "16.x"
-  }
-```
-
-- fix build folder (remove /build from client/.gitignore)
-- setup new github repo
-- deploy to render
+| 항목        | 제안                                    |
+| ----------- | --------------------------------------- |
+| 정답 검증   | 클라이언트 → 서버 이전 필요 (보안 향상) |
+| 관리자 기능 | 수동 점수 조정, 팀 등록/삭제 UI 확장    |
+| 대시보드    | Chart.js 기반 통계 시각화               |
