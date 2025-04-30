@@ -7,7 +7,7 @@
 
 관리자 페이지: https://pg-webpage-frontend.onrender.com/admin
 퀴즈 페이지: https://pg-webpage-frontend.onrender.com/landing/1
-(url에서 /landing/n, n을 교체함으로써 해당 퀴즈로 이동)
+(url에서 /landing/n, n을 교체함으로써 해당 퀴즈로 이동, 1~17번)
 
 ---
 
